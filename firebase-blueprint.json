@@ -1,0 +1,104 @@
+{
+  "entities": {
+    "Channel": {
+      "title": "Channel",
+      "description": "Live television broadcast stream metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120 },
+        "slug": { "type": "string", "maxLength": 120 },
+        "logo": { "type": "string", "maxLength": 1000 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "streamUrl": { "type": "string", "maxLength": 2000 },
+        "streamType": { "type": "string", "enum": ["hls", "dash", "mp4", "demo"] },
+        "country": { "type": "string", "maxLength": 80 },
+        "countryCode": { "type": "string", "maxLength": 10 },
+        "language": { "type": "string", "maxLength": 80 },
+        "category": { "type": "string", "maxLength": 80 },
+        "featured": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "viewerCount": { "type": "number" },
+        "website": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "slug", "streamUrl", "streamType", "category", "active"]
+    },
+    "Program": {
+      "title": "Program",
+      "description": "Electronic program guide entry for a TV channel",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "channelId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "category": { "type": "string", "maxLength": 80 },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "thumbnail": { "type": "string", "maxLength": 1000 },
+        "rating": { "type": "string", "maxLength": 20 },
+        "seasonEpisode": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "channelId", "title", "startTime", "endTime"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile, synchronized favorites, and preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 120 },
+        "email": { "type": "string", "maxLength": 254 },
+        "photoURL": { "type": "string", "maxLength": 1000 },
+        "favorites": { "type": "array" },
+        "preferredCountry": { "type": "string", "maxLength": 10 },
+        "preferredLanguage": { "type": "string", "maxLength": 10 },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid"]
+    },
+    "WatchHistoryItem": {
+      "title": "WatchHistoryItem",
+      "description": "User playback history entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "channelId": { "type": "string", "maxLength": 128 },
+        "channelName": { "type": "string", "maxLength": 120 },
+        "channelLogo": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 80 },
+        "watchedAt": { "type": "string", "format": "date-time" },
+        "durationSeconds": { "type": "number" }
+      },
+      "required": ["id", "userId", "channelId", "watchedAt"]
+    }
+  },
+  "firestore": {
+    "/channels/{channelId}": {
+      "schema": "Channel",
+      "description": "Public catalog of TV channels"
+    },
+    "/programs/{programId}": {
+      "schema": "Program",
+      "description": "Public TV guide EPG listings"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile with private favorites and preferences"
+    },
+    "/users/{userId}/history/{historyId}": {
+      "schema": "WatchHistoryItem",
+      "description": "Private viewing history of the authenticated user"
+    },
+    "/admins/{adminId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Authorized admin accounts registry"
+    }
+  }
+}

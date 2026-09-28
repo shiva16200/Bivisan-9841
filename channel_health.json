@@ -1,0 +1,231 @@
+{
+  "working": [
+    {
+      "id": "nettv-kantipur-hd",
+      "name": "Kantipur TV HD",
+      "streamUrl": "https://ktvhdsg.ekantipur.com:8443/high_quality_85840165/hd/playlist.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-image-channel",
+      "name": "Image Channel HD",
+      "streamUrl": "https://mumt05.tangotv.in/87NeALx2NEPAL1/index.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-sagarmatha-tv",
+      "name": "Sagarmatha TV HD",
+      "streamUrl": "https://ktvhdsg.ekantipur.com:8443/high_quality_85840165/hd/playlist.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-public-4k-tv",
+      "name": "Public 4K TV Nepal",
+      "streamUrl": "http://103.180.240.141:8080/hls/main1/playlist.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-divya-darshan",
+      "name": "Divya Darshan TV HD",
+      "streamUrl": "https://live.divyadarshantv.com/hls/0/stream.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-angel-tv-nepal",
+      "name": "Angel TV Nepal",
+      "streamUrl": "https://janya-digimix.akamaized.net/vglive-sk-109639/nepali/ngrp:angelnepali_all/playlist.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-nepal-1",
+      "name": "Nepal 1 Entertainment",
+      "streamUrl": "https://mumt05.tangotv.in/87NeALx2NEPAL1/index.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "himalayan-sports",
+      "name": "Himalayan Sports",
+      "streamUrl": "/api/stream/himalayan-sports.m3u8",
+      "res": {
+        "ok": true,
+        "status": 200
+      }
+    },
+    {
+      "id": "nettv-aaj-tak",
+      "name": "Aaj Tak HD",
+      "streamUrl": "https://feeds.intoday.in/aajtak/api/aajtakhd/master.m3u8",
+      "res": {
+        "ok": true,
+        "status": 200
+      }
+    },
+    {
+      "id": "nettv-abp-news",
+      "name": "ABP News HD",
+      "streamUrl": "https://d1rc86nwwc9fag.cloudfront.net/vglive-sk-472500/abpnews/master.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-b4u-movies",
+      "name": "B4U Movies HD",
+      "streamUrl": "https://streams.tangotv.in/B4UMOVIES/ORIGIN/index.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-colors-hd",
+      "name": "Colors HD",
+      "streamUrl": "https://d2lk5u59tns74c.cloudfront.net/out/v1/26e915d6d12b4a06822c5e33c088ed56/index.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-zee-cinema",
+      "name": "Zee Cinema HD",
+      "streamUrl": "https://streams.tangotv.in/B4UMOVIES/ORIGIN/index.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-dd-national",
+      "name": "DD National HD",
+      "streamUrl": "https://d2lk5u59tns74c.cloudfront.net/out/v1/26e915d6d12b4a06822c5e33c088ed56/index.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    },
+    {
+      "id": "nettv-mtv-club",
+      "name": "MTV Club & Music",
+      "streamUrl": "https://da86m1sqpm3o0.cloudfront.net/28072023/smil:mtvindia.smil/playlist.m3u8",
+      "res": {
+        "ok": true,
+        "status": 206
+      }
+    }
+  ],
+  "broken": [
+    {
+      "id": "nettv-ap1-hd",
+      "name": "AP1 Television HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-ntv-hd",
+      "name": "Nepal Television HD (NTV)",
+      "streamUrl": "https://streaming.tvnepal.com:19360/raynewsdaily/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-ntv-plus",
+      "name": "NTV Plus HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-ntv-news",
+      "name": "NTV News HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/raynewsdaily/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-himalaya-tv",
+      "name": "Himalaya TV HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-news24-nepal",
+      "name": "News 24 Nepal HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-prime-times",
+      "name": "Prime Times HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/raynewsdaily/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-avenues-tv",
+      "name": "Avenues Television HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-capital-tv",
+      "name": "Capital TV HD",
+      "streamUrl": "https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    },
+    {
+      "id": "nettv-ray-tv",
+      "name": "Ray TV HD Nepal",
+      "streamUrl": "https://streaming.tvnepal.com:19360/raynewsdaily/720p.m3u8",
+      "res": {
+        "ok": false,
+        "status": "fetch failed"
+      }
+    }
+  ]
+}

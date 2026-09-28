@@ -1,0 +1,10 @@
+{
+  "name": "Remix StreamLive",
+  "description": "Discover and watch live TV channels and program guides, category filtering, and high-speed streaming.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

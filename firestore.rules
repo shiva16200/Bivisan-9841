@@ -1,0 +1,98 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny all documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == 'shivagadhi162@gmail.com' && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validations
+    function isValidChannel(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 120 &&
+             data.slug is string && data.slug.size() > 0 && data.slug.size() <= 120 &&
+             data.streamUrl is string && data.streamUrl.size() > 0 && data.streamUrl.size() <= 2000 &&
+             data.streamType is string && (data.streamType == 'hls' || data.streamType == 'dash' || data.streamType == 'mp4' || data.streamType == 'demo') &&
+             data.category is string && data.category.size() <= 80 &&
+             data.active is bool;
+    }
+
+    function isValidProgram(data) {
+      return data.channelId is string && data.channelId.size() <= 128 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.startTime is string && data.endTime is string;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.uid == userId &&
+             (!('email' in data) || data.email is string) &&
+             (!('favorites' in data) || data.favorites is list);
+    }
+
+    // Channels Collection
+    match /channels/{channelId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(channelId) && isValidChannel(incoming());
+      allow update: if isAdmin() && isValidId(channelId) && isValidChannel(incoming());
+      allow delete: if isAdmin() && isValidId(channelId);
+    }
+
+    // Programs / EPG Collection
+    match /programs/{programId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(programId) && isValidProgram(incoming());
+      allow update: if isAdmin() && isValidId(programId) && isValidProgram(incoming());
+      allow delete: if isAdmin() && isValidId(programId);
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming(), userId);
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming(), userId);
+      allow delete: if isOwner(userId) || isAdmin();
+
+      // Watch history subcollection
+      match /history/{historyId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(historyId) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(historyId) && incoming().userId == userId;
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // Admins registry
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
