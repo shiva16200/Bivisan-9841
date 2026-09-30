@@ -37,8 +37,7 @@ export const HomePage: React.FC = () => {
   const { history } = useHistory();
   const { playChannel } = usePlayer();
 
-  const initialFeatured =
-    INITIAL_CHANNELS.find((c) => c.name === 'H Sports' || c.id === 'himalayan-sports') || INITIAL_CHANNELS[0];
+  const initialFeatured = INITIAL_CHANNELS[0];
   const [channels, setChannels] = useState<Channel[]>(INITIAL_CHANNELS);
   const [loading, setLoading] = useState(false);
   const [featuredChannel, setFeaturedChannel] = useState<Channel | null>(initialFeatured);
@@ -47,10 +46,6 @@ export const HomePage: React.FC = () => {
     next: Program | null;
     progressPercent: number;
   }>({ current: null, next: null, progressPercent: 0 });
-  const [zapperCategory, setZapperCategory] = useState<
-    'all' | 'sports' | 'nepal' | 'news' | 'entertainment' | 'music' | 'kids' | 'devotional'
-  >('all');
-  const [zapperSearchQuery, setZapperSearchQuery] = useState('');
   const [directoryCategory, setDirectoryCategory] = useState<string>('All');
   const [directorySearchQuery, setDirectorySearchQuery] = useState('');
 
@@ -59,15 +54,9 @@ export const HomePage: React.FC = () => {
     fetchChannels().then((allChannels) => {
       if (isMounted) {
         setChannels(allChannels);
-        // Automatically find and prioritize the single canonical H Sports channel.
+        // Default to Goldmines or top verified channel for instant lag-free streaming
         const featured =
-          allChannels.find(
-            (c) =>
-              c.name === 'H Sports' ||
-              c.slug === 'h-sports' ||
-              c.id === 'himalayan-sports' ||
-              c.id === 'h-sports'
-          ) ||
+          allChannels.find((c) => c.id === 'goldmines-tv') ||
           allChannels.find((c) => c.featured && c.active) ||
           allChannels[0];
 
@@ -138,6 +127,25 @@ export const HomePage: React.FC = () => {
     );
   }, [channels]);
 
+  // Newly Added & Verified Ultra-Fast Live Channels
+  const newlyAddedChannels = useMemo(() => {
+    const verifiedIds = [
+      'goldmines-tv',
+      'goldmines-movies',
+      'iptv-red-bull-tv',
+      'iptv-sportsgrid',
+      'iptv-9x-jalwa',
+      'iptv-dw-news',
+      'iptv-nasa-tv',
+      'iptv-capital-tv',
+      'nettv-kantipur-hd',
+      'iptv-ray-tv',
+      'iptv-bloomberg',
+      'nettv-nepal-1',
+    ];
+    return channels.filter((c) => verifiedIds.includes(c.id));
+  }, [channels]);
+
   // Popular channels (sorted by viewers)
   const popularChannels = useMemo(() => {
     return [...channels].sort((a, b) => (b.viewerCount || 0) - (a.viewerCount || 0)).slice(0, 12);
@@ -172,65 +180,6 @@ export const HomePage: React.FC = () => {
       heroSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [playChannel]);
-
-  // Curated channels for instant zero-lag TV zapping on Home screen
-  const quickSwitchChannels = useMemo(() => {
-    let pool = channels;
-    if (zapperCategory === 'sports') {
-      pool = sportsChannels;
-    } else if (zapperCategory === 'nepal') {
-      pool = nepaliChannels;
-    } else if (zapperCategory === 'news') {
-      pool = newsChannels;
-    } else if (zapperCategory === 'entertainment') {
-      pool = entertainmentChannels;
-    } else if (zapperCategory === 'music') {
-      pool = musicChannels;
-    } else if (zapperCategory === 'kids') {
-      pool = kidsChannels;
-    } else if (zapperCategory === 'devotional') {
-      pool = devotionalChannels;
-    }
-
-    if (zapperSearchQuery.trim()) {
-      const q = zapperSearchQuery.toLowerCase().trim();
-      pool = pool.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.category.toLowerCase().includes(q) ||
-          c.channelNumber?.toString() === q
-      );
-    }
-
-    const list: Channel[] = [];
-    const seen = new Set<string>();
-
-    if (featuredChannel && (zapperCategory === 'all' || pool.some((c) => c.id === featuredChannel.id))) {
-      list.push(featuredChannel);
-      seen.add(featuredChannel.id);
-    }
-
-    pool.forEach((c) => {
-      if (list.length < 120 && !seen.has(c.id)) {
-        list.push(c);
-        seen.add(c.id);
-      }
-    });
-
-    return list;
-  }, [
-    channels,
-    zapperCategory,
-    zapperSearchQuery,
-    sportsChannels,
-    nepaliChannels,
-    newsChannels,
-    entertainmentChannels,
-    musicChannels,
-    kidsChannels,
-    devotionalChannels,
-    featuredChannel,
-  ]);
 
   // Full Directory category tabs
   const directoryCategoriesList = useMemo(() => {
@@ -309,10 +258,10 @@ export const HomePage: React.FC = () => {
 
   return (
     <div id="streamlive-home-page" className="space-y-12 animate-in fade-in duration-300">
-      {/* 1. Featured Live Channel Hero Banner with Auto-playing TV & Instant Channel Zapper */}
+      {/* 1. Featured Live Channel Hero Banner with Auto-playing TV */}
       {featuredChannel && (
-        <section ref={heroSectionRef} id="featured-hero" className="space-y-3 sm:space-y-4">
-          <div className="w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-black">
+        <section ref={heroSectionRef} id="featured-hero" className="space-y-3 sm:space-y-4 -mx-4 sm:mx-0 -mt-2 sm:mt-0">
+          <div className="w-full rounded-none sm:rounded-3xl overflow-hidden border-b sm:border border-slate-800 shadow-2xl bg-black">
             <LivePlayer
               channel={featuredChannel}
               currentProgram={featuredProg.current}
@@ -322,87 +271,8 @@ export const HomePage: React.FC = () => {
             />
           </div>
 
-          {/* Quick TV Channel Switcher Bar with Category Filters (Instant Tuning - faster than TV) */}
-          <div className="space-y-2.5 pt-1">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-black uppercase tracking-wider text-rose-400 flex-shrink-0">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                <span>TV Remote Zapper:</span>
-              </div>
-
-              {/* Inline filter search for instant TV tuning */}
-              <div className="relative flex-1 max-w-xs min-w-[140px]">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Find channel (e.g. Kantipur, Sony)..."
-                  value={zapperSearchQuery}
-                  onChange={(e) => setZapperSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-            </div>
-
-            {/* Category selector row */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {[
-                { id: 'all', label: 'All Live' },
-                { id: 'sports', label: '⚽ Sports' },
-                { id: 'nepal', label: '🇳🇵 Nepal TV' },
-                { id: 'news', label: '📰 News' },
-                { id: 'entertainment', label: '🎭 Entertainment' },
-                { id: 'music', label: '🎵 Music' },
-                { id: 'kids', label: '👶 Kids' },
-                { id: 'devotional', label: '🕉️ Devotional' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setZapperCategory(tab.id as any);
-                    setZapperSearchQuery('');
-                  }}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    zapperCategory === tab.id
-                      ? 'bg-rose-600 text-white shadow-sm'
-                      : 'bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {quickSwitchChannels.map((ch) => {
-                const isActive = featuredChannel?.id === ch.id;
-                return (
-                  <button
-                    key={ch.id}
-                    onClick={() => handleSelectFeaturedChannel(ch)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 cursor-pointer active:scale-95 border ${
-                      isActive
-                        ? 'bg-rose-600 text-white border-rose-500 shadow-md shadow-rose-600/30'
-                        : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border-slate-800 hover:border-slate-700'
-                    }`}
-                    title={`Switch to ${ch.name}`}
-                  >
-                    {ch.logo ? (
-                      <img src={ch.logo} alt={ch.name} className="w-4 h-4 rounded-md object-cover bg-slate-950 flex-shrink-0" />
-                    ) : (
-                      <span className="w-4 h-4 rounded-md bg-indigo-600 flex items-center justify-center text-[9px] text-white flex-shrink-0">
-                        {ch.name.charAt(0)}
-                      </span>
-                    )}
-                    <span className="truncate max-w-[120px]">{ch.name}</span>
-                    {isActive && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Professional Channel Details Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
+          <div className="mx-4 sm:mx-0 flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
             <div className="flex items-center gap-3 min-w-0">
               {featuredChannel.logo ? (
                 <img
@@ -453,7 +323,45 @@ export const HomePage: React.FC = () => {
         </section>
       )}
 
-      {/* 2. Continue Watching (Recently Watched) */}
+      {/* 2. Newly Added & Verified Ultra-Fast Live Channels */}
+      {newlyAddedChannels.length > 0 && (
+        <section id="newly-added-section" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-amber-950/20 via-slate-900/60 to-slate-900/40 p-4 sm:p-5 rounded-2xl border border-amber-900/30">
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-gradient-to-r from-amber-500 to-rose-600 text-white tracking-wider shadow-md shadow-amber-950/50 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>NEW CHANNELS</span>
+              </span>
+              <div>
+                <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                  <span>Newly Added & Verified Live Channels</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hidden sm:inline-flex">
+                    100% Active & Ultra Fast
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Goldmines, Goldmines Movies, Red Bull TV, 9X Jalwa, SportsGrid, DW News, Kantipur TV, Capital TV, NASA
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/live"
+              className="px-3.5 py-2 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+            >
+              <span>Explore All Channels</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {newlyAddedChannels.map((channel) => (
+              <ChannelCard key={channel.id} channel={channel} onSelect={handleSelectFeaturedChannel} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 3. Continue Watching (Recently Watched) */}
       {continueWatchingChannels.length > 0 && (
         <section id="continue-watching-section" className="space-y-4">
           <div className="flex items-center justify-between">

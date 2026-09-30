@@ -30,7 +30,17 @@ export function resolvePlayableStreamUrl(url: string): string {
     trimmed.includes('mux.dev') ||
     trimmed.includes('theoplayer.com') ||
     trimmed.includes('cloudfront.net') ||
-    trimmed.includes('unified-streaming.com')
+    trimmed.includes('unified-streaming.com') ||
+    trimmed.includes('akamaized.net') ||
+    trimmed.includes('amagi.tv') ||
+    trimmed.includes('wiseplayout.com') ||
+    trimmed.includes('intoday.in') ||
+    trimmed.includes('tvnepal.com') ||
+    trimmed.includes('ekantipur.com') ||
+    trimmed.includes('divyadarshantv.com') ||
+    trimmed.includes('wurl.tv') ||
+    trimmed.includes('rttv.com') ||
+    trimmed.includes('bloomberg.com')
   ) {
     return trimmed;
   }
@@ -302,14 +312,14 @@ export function useHlsPlayer({
         enableWorker: true,
         progressive: true, // Enables fast parallel progressive parsing
         lowLatencyMode: false, // Ensures solid continuous streaming without chunk underrun
-        liveSyncDurationCount: isLowDataMode ? 2.0 : 2.5,
+        liveSyncDurationCount: 2.5, // Provides stable safety buffer against network fluctuations and eliminate lag
         liveMaxLatencyDurationCount: 6.0,
-        // Tuned buffer size: avoids downloading 30s ahead on 512 kbps which starves the connection
-        maxBufferLength: isLowDataMode ? 6 : (isMobile ? 10 : 20),
-        maxMaxBufferLength: isLowDataMode ? 12 : (isMobile ? 20 : 40),
-        backBufferLength: 8,
-        maxBufferSize: isLowDataMode ? 4 * 1024 * 1024 : (isMobile ? 10 * 1024 * 1024 : 30 * 1024 * 1024),
-        maxBufferHole: 1.5, // Smoothly jumps tiny network transmission gaps on 512k
+        // Tuned buffer size for lag-free continuous live playback
+        maxBufferLength: 12,
+        maxMaxBufferLength: 24,
+        backBufferLength: 6,
+        maxBufferSize: 20 * 1024 * 1024,
+        maxBufferHole: 0.8, // Smoothly jumps tiny network transmission gaps
         maxFragLookUpTolerance: 0.4,
         highBufferWatchdogPeriod: 2,
         nudgeOffset: 0.2,

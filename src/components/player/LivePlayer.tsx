@@ -156,9 +156,9 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
 
   // Track viewing history and increment view count
   useEffect(() => {
-    addToHistory(channel.id);
+    addToHistory(channel);
     incrementChannelView(channel.id, channel.viewerCount);
-  }, [channel.id, channel.viewerCount, addToHistory]);
+  }, [channel, addToHistory]);
 
   // Fullscreen listeners
   useEffect(() => {
@@ -495,11 +495,14 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
     }
     lastTapRef.current = now;
 
-    // Single click toggles controls
-    setShowControls((prev) => !prev);
-    if (!showControls) {
-      resetControlsTimer();
-    }
+    // Screen click ONLY toggles controls - NEVER play/pause on screen click!
+    setShowControls((prev) => {
+      const next = !prev;
+      if (next) {
+        resetControlsTimer();
+      }
+      return next;
+    });
   };
 
   // Keyboard accessibility
@@ -574,6 +577,11 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleContainerClick}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -584,7 +592,7 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
       className={`${
         isCssFullscreen || isFullscreen
           ? 'fixed inset-0 z-[100] w-screen h-screen min-w-full min-h-full rounded-none border-0'
-          : 'relative w-full aspect-video rounded-none sm:rounded-3xl border-0 sm:border border-slate-800'
+          : 'relative w-full h-[36vh] min-h-[250px] xs:h-[42vh] xs:min-h-[285px] sm:h-auto sm:aspect-video rounded-none sm:rounded-3xl border-0 sm:border border-slate-800'
       } bg-black overflow-hidden shadow-2xl group focus:outline-none select-none`}
     >
       {/* Top Header Overlay: In minimal inline mode, only Views count is displayed; in fullscreen all details appear */}
@@ -806,6 +814,22 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
         </div>
       )}
 
+      {/* Tap to Unmute Overlay Button when Playing Muted */}
+      {isPlaying && isMuted && !isBuffering && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleMute();
+            showHud('🔊 Sound Enabled');
+          }}
+          className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/85 hover:bg-slate-900 text-white text-xs font-bold border border-white/20 backdrop-blur-md shadow-xl transition-all active:scale-95 animate-in fade-in cursor-pointer"
+          title="Click to Unmute Sound"
+        >
+          <VolumeX className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
+          <span>Tap to Unmute</span>
+        </button>
+      )}
+
       {/* Clean Single Bottom Controls Bar (Notch / Safe Area aware) */}
       <div
         className={`absolute bottom-0 inset-x-0 p-2.5 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] bg-gradient-to-t from-black/95 via-black/75 to-transparent z-20 transition-opacity duration-300 ${
@@ -851,21 +875,20 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
         )}
 
         <div className="flex items-center justify-between gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
-          {/* Left Controls: Volume on home screen; Play/Pause + 10s Rewind in Fullscreen */}
+          {/* Left Controls: Play/Pause ALWAYS present on homescreen & fullscreen */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {isExpanded && (
-              <button
-                id="player-play-toggle"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  togglePlay();
-                }}
-                aria-label={isPlaying ? 'Pause' : 'Play'}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md active:scale-95 flex-shrink-0"
-              >
-                {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white ml-0.5" />}
-              </button>
-            )}
+            <button
+              id="player-play-toggle"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePlay();
+              }}
+              aria-label={isPlaying ? 'Pause' : 'Play'}
+              title={isPlaying ? 'Pause' : 'Play'}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md active:scale-95 flex-shrink-0 cursor-pointer"
+            >
+              {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white ml-0.5" />}
+            </button>
 
             {/* 10s DVR Quick Rewind Button: Only shown in Fullscreen / Expanded */}
             {isExpanded && (
@@ -999,27 +1022,6 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
                   )}
                 </div>
 
-                {/* 512 kbps Eco / Ultra Low Bandwidth Toggle */}
-                <button
-                  id="player-eco-mode-toggle"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleLowDataMode();
-                    showHud(!isLowDataMode ? '⚡ 512 kbps Eco Mode ON (फास्ट स्ट्रिमिङ)' : '⚡ High Quality Standard Mode');
-                    resetControlsTimer();
-                  }}
-                  aria-label="Toggle 512 kbps Mode"
-                  title="512 kbps Low-Latency Mode (फास्ट स्ट्रिमिङ बचत मोड)"
-                  className={`px-2.5 py-1 rounded-xl border text-xs font-black transition-all active:scale-95 flex items-center gap-1.5 backdrop-blur-md ${
-                    isLowDataMode
-                      ? 'bg-emerald-600/90 hover:bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-600/30'
-                      : 'bg-black/50 hover:bg-white/20 border-white/10 text-emerald-400'
-                  }`}
-                >
-                  <Zap className={`w-3.5 h-3.5 ${isLowDataMode ? 'fill-white text-white' : 'text-emerald-400'}`} />
-                  <span className="text-[11px]">512k</span>
-                </button>
-
                 {/* Video Quality Selector (144p to 1080p, Auto) */}
                 <div className="relative player-control-tool">
                   <button
@@ -1053,29 +1055,6 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
                         <span className="text-indigo-400 font-semibold">Adaptive</span>
                       </div>
 
-                      {/* 512k Low Bandwidth Quick Option */}
-                      <button
-                        onClick={() => {
-                          toggleLowDataMode();
-                          showHud(!isLowDataMode ? '⚡ 512 kbps Eco Mode ON' : '⚡ High Quality Standard Mode');
-                          setShowQualityMenu(false);
-                          resetControlsTimer();
-                        }}
-                        className={`w-full my-1 flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                          isLowDataMode
-                            ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/50'
-                            : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border-slate-800'
-                        }`}
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <Zap className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>512 kbps Mode</span>
-                        </div>
-                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
-                          {isLowDataMode ? 'Active' : 'Eco'}
-                        </span>
-                      </button>
-
                       <div className="py-1 max-h-56 overflow-y-auto space-y-0.5">
                         {QUALITY_PRESETS.map((q) => (
                           <button
@@ -1108,25 +1087,25 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
                     </div>
                   )}
                 </div>
-
-                {/* Screen Fit Mode Cycle Button (Fit / Fill / Stretch / Zoom) */}
-                <button
-                  id="player-fit-cycle"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    cycleFitMode();
-                  }}
-                  aria-label="Screen Fit"
-                  title="Tap to cycle: Edge-to-Edge Notch, Zoom 120%, Stretch, Fit"
-                  className="px-2.5 py-1 rounded-xl bg-black/50 hover:bg-white/20 border border-white/10 text-white font-bold text-xs transition-colors active:scale-95 flex items-center gap-1.5 backdrop-blur-md"
-                >
-                  <Scan className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>
-                    {fitMode === 'cover' ? 'Notch' : fitMode === 'zoom' ? 'Zoom' : fitMode === 'contain' ? 'Fit' : fitMode === 'fill' ? 'Stretch' : fitMode}
-                  </span>
-                </button>
               </>
             )}
+
+            {/* Screen Fit Mode Cycle Button (Fit / Notch / Zoom / Stretch) - Always accessible */}
+            <button
+              id="player-fit-cycle"
+              onClick={(e) => {
+                e.stopPropagation();
+                cycleFitMode();
+              }}
+              aria-label="Screen Fit"
+              title="Screen Fit: Tap to toggle between Fit (Normal), Notch (Edge-to-Edge), Zoom, Stretch"
+              className="px-2 py-1 rounded-xl bg-black/50 hover:bg-white/20 border border-white/10 text-white font-bold text-xs transition-colors active:scale-95 flex items-center gap-1 backdrop-blur-md cursor-pointer flex-shrink-0"
+            >
+              <Scan className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="text-[11px]">
+                {fitMode === 'cover' ? 'Notch' : fitMode === 'zoom' ? 'Zoom' : fitMode === 'contain' ? 'Fit' : fitMode === 'fill' ? 'Stretch' : fitMode}
+              </span>
+            </button>
 
             {/* Picture-in-picture (Always visible) */}
             <button

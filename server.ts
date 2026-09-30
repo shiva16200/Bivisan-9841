@@ -351,36 +351,31 @@ async function resolveChannelStreamUrl(chid: string, forceIntl = false): Promise
   return '';
 }
 
-// Resilient Stream Self-Healing: If an upstream provider channel is down or 404,
-// seamlessly serve a verified live TV stream so the player never breaks or shows error warnings!
+// Resilient Stream Handler: Ensures only the requested channel is served without hijacking to another channel
 async function serveSelfHealedFallback(res: express.Response, originalChid: string) {
-  const evergreenChids = ['1413', '516', '225', '238', '836'];
-  for (const fallbackId of evergreenChids) {
-    if (fallbackId === originalChid) continue;
-    try {
-      const fallbackUrl = await resolveChannelStreamUrl(fallbackId, true);
-      if (fallbackUrl) {
-        const upRes = await fetch(fallbackUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Referer': 'http://tv.techjail.net/' },
-          signal: AbortSignal.timeout(3500),
-        });
-        if (upRes.ok) {
-          const txt = await upRes.text();
-          const rewritten = rewriteM3u8Content(txt, fallbackUrl);
-          res.setHeader('Content-Type', 'application/vnd.apple.mpegurl; charset=utf-8');
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          res.setHeader('X-Stream-Self-Healed', 'true');
-          res.setHeader('X-Fallback-Channel', fallbackId);
-          res.setHeader('Cache-Control', 'no-cache');
-          res.send(rewritten);
-          return;
-        }
+  // Retry original channel once with fresh token
+  try {
+    const freshUrl = await resolveChannelStreamUrl(originalChid, true);
+    if (freshUrl) {
+      const upRes = await fetch(freshUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Referer': 'http://tv.techjail.net/' },
+        signal: AbortSignal.timeout(4000),
+      });
+      if (upRes.ok) {
+        const txt = await upRes.text();
+        const rewritten = rewriteM3u8Content(txt, freshUrl);
+        res.setHeader('Content-Type', 'application/vnd.apple.mpegurl; charset=utf-8');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.send(rewritten);
+        return;
       }
-    } catch {
-      // try next evergreen channel
     }
+  } catch {
+    // ignore
   }
-  res.status(503).send('#EXTM3U\n#EXT-X-ERROR:STREAM_OFFLINE\n');
+
+  res.status(503).send('#EXTM3U\n#EXT-X-ERROR:STREAM_CURRENTLY_UNAVAILABLE\n');
 }
 
 async function handleLiveStreamRequest(req: express.Request, res: express.Response, forceIntl = false) {

@@ -29,26 +29,13 @@ export const ALL_DEFAULT_CHANNELS: Channel[] = [
       isVerifiedLive: isVerified,
     };
   }),
-].filter((c) => {
-  const cat = (c.category || '').toLowerCase();
-  const name = (c.name || '').toLowerCase();
-  if (cat === 'movies' || cat === 'cinema' || cat.includes('movie') || cat.includes('cinema')) return false;
-  if (name.includes('cinema') || name.includes('b4u movies')) return false;
-  return true;
-}).sort((a, b) => {
-  // 100% verified working channels appear first so user has immediate playback
-  if (a.isVerifiedLive && !b.isVerifiedLive) return -1;
-  if (!a.isVerifiedLive && b.isVerifiedLive) return 1;
-  if (a.featured && !b.featured) return -1;
-  if (!a.featured && b.featured) return 1;
-  return 0;
-});
+];
 
 export function getVerifiedWorkingChannels(): Channel[] {
   return ALL_DEFAULT_CHANNELS.filter((c) => c.isVerifiedLive);
 }
 
-const CUSTOM_STORAGE_KEY = 'streamlive_custom_channels_v20';
+const CUSTOM_STORAGE_KEY = 'streamlive_custom_channels_v26';
 
 let inMemoryStoredChannels: Channel[] | null = null;
 
