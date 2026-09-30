@@ -55,7 +55,9 @@ const RouteLoadingFallback = () => (
 const isGitHubPages =
   typeof window !== 'undefined' &&
   (window.location.hostname.endsWith('github.io') ||
-   window.location.protocol === 'file:');
+   window.location.hostname.includes('pages.dev') ||
+   window.location.protocol === 'file:' ||
+   Boolean(window.location.hash && window.location.hash.startsWith('#/')));
 
 export default function App() {
   const RouterComponent = isGitHubPages ? HashRouter : BrowserRouter;
