@@ -24,10 +24,24 @@ export function resolvePlayableStreamUrl(url: string): string {
   ) {
     return '/fifa26/HimalayaSportsFifa026/playlist.m3u8';
   }
+  // Streams that support direct client playback with open CORS headers
+  if (
+    trimmed.includes('tangotv.in') ||
+    trimmed.includes('mux.dev') ||
+    trimmed.includes('theoplayer.com') ||
+    trimmed.includes('cloudfront.net') ||
+    trimmed.includes('unified-streaming.com')
+  ) {
+    return trimmed;
+  }
   if (trimmed.startsWith('/api/')) return trimmed;
   if (trimmed.includes('.php') || trimmed.includes('.html')) return trimmed;
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     if (trimmed.includes('/api/stream/proxy')) return trimmed;
+    // On static deployments (e.g. GitHub Pages) where /api doesn't exist, load directly
+    if (typeof window !== 'undefined' && window.location.hostname.endsWith('github.io')) {
+      return trimmed;
+    }
     return `/api/stream/proxy?url=${encodeURIComponent(trimmed)}`;
   }
   return trimmed;

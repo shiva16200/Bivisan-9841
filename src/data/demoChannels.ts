@@ -45,6 +45,53 @@ const SAMPLE_HLS_4 = 'https://demo.unified-streaming.com/k8s/features/stable/vid
 
 export const INITIAL_CHANNELS: Channel[] = [
   // ==========================================
+  // GOLDMINES TELEFILMS LIVE CHANNELS
+  // ==========================================
+  {
+    id: 'goldmines-tv',
+    name: 'Goldmines',
+    slug: 'goldmines',
+    logo: 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=240&auto=format&fit=crop&q=80',
+    description: 'Goldmines Telefilms - India\'s leading cinema broadcaster showcasing premier South Indian Hindi-dubbed blockbusters and Bollywood action hits 24/7.',
+    streamUrl: 'https://streams.tangotv.in/GOLDMINES/ORIGIN/tracks-v1a1/mono.m3u8',
+    streamType: 'hls',
+    country: 'India',
+    countryCode: 'IN',
+    language: 'Hindi',
+    category: 'Entertainment',
+    channelNumber: 501,
+    featured: true,
+    active: true,
+    viewerCount: 0,
+    quality: '1080p Full HD',
+    resolution: '1920x1080',
+    website: 'https://tangotv.in/',
+    createdAt: '2026-03-29T00:00:00Z',
+    updatedAt: '2026-03-29T00:00:00Z',
+  },
+  {
+    id: 'goldmines-movies',
+    name: 'Goldmines Movies',
+    slug: 'goldmines-movies',
+    logo: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=240&auto=format&fit=crop&q=80',
+    description: 'Goldmines Movies - Non-stop action thrillers, romantic blockbusters, and premier South Hindi dubbed cinematic entertainment.',
+    streamUrl: 'https://streams.tangotv.in/GOLDMINEMOVIES/ORIGIN/tracks-v1a1/mono.m3u8',
+    streamType: 'hls',
+    country: 'India',
+    countryCode: 'IN',
+    language: 'Hindi',
+    category: 'Entertainment',
+    channelNumber: 502,
+    featured: true,
+    active: true,
+    viewerCount: 0,
+    quality: '1080p Full HD',
+    resolution: '1920x1080',
+    website: 'https://tangotv.in/',
+    createdAt: '2026-03-29T00:00:00Z',
+    updatedAt: '2026-03-29T00:00:00Z',
+  },
+  // ==========================================
   // NETTV NEPAL CHANNELS (webtv.nettv.com.np/livetv)
   // ==========================================
   {

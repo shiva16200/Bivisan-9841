@@ -4,7 +4,7 @@
  */
 
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route } from 'react-router-dom';
 
 // Context Providers
 import { ToastProvider } from './context/ToastContext';
@@ -52,9 +52,16 @@ const RouteLoadingFallback = () => (
   </div>
 );
 
+const isGitHubPages =
+  typeof window !== 'undefined' &&
+  (window.location.hostname.endsWith('github.io') ||
+   window.location.protocol === 'file:');
+
 export default function App() {
+  const RouterComponent = isGitHubPages ? HashRouter : BrowserRouter;
+
   return (
-    <BrowserRouter>
+    <RouterComponent>
       <ToastProvider>
         <AuthProvider>
           <FavoritesProvider>
@@ -148,6 +155,6 @@ export default function App() {
           </FavoritesProvider>
         </AuthProvider>
       </ToastProvider>
-    </BrowserRouter>
+    </RouterComponent>
   );
 }
