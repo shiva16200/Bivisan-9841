@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <title>StreamLive</title>
+    <meta name="description" content="Watch live television channels, sports, news, and entertainment with instant playback, ultra-low latency, and fast streaming on all connections." />
+    <meta property="og:title" content="StreamLive" />
+    <meta property="og:description" content="Watch live television channels, sports, news, and entertainment with instant playback, ultra-low latency, and fast streaming on all connections." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+      // 1. Ensure trailing slash for GitHub Pages repo paths so relative assets like ./assets/... never 404
+      (function() {
+        var l = window.location;
+        if (l.hostname.endsWith('github.io')) {
+          var p = l.pathname;
+          if (!p.endsWith('/') && !p.split('/').pop().includes('.')) {
+            l.replace(l.protocol + '//' + l.host + p + '/' + (l.search || '') + (l.hash || ''));
+          }
+        }
+      })();
+
+      // Gracefully prevent unhandled rejection from Vite HMR WebSockets in reverse-proxy cloud environments
+      window.addEventListener('unhandledrejection', function(event) {
+        if (
+          event?.reason &&
+          (event.reason.message === 'WebSocket closed without opened.' ||
+            (typeof event.reason.message === 'string' &&
+              event.reason.message.includes('WebSocket closed without opened')))
+        ) {
+          event.preventDefault();
+        }
+      });
+      // Disable right-click context menu and view-source/devtools shortcuts
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      document.addEventListener('keydown', function(e) {
+        // Prevent Ctrl+U (View Source), F12 (DevTools), Ctrl+Shift+I/J/C (Inspect), Ctrl+S (Save)
+        if (
+          (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) ||
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+          e.key === 'F12'
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      });
+    </script>
+    <script type="module" crossorigin src="./assets/index-CmG8B2sv.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/vendor-react-CiGtKbCe.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-ui-_5UwcrwZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-hls-BHJ_e9_o.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-BbUio38h.css">
+  </head>
+  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white" oncontextmenu="return false;">
+    <div id="root"></div>
+  </body>
+</html>
+

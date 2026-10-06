@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>StreamLive</title>
+    <script type="text/javascript">
+      // GitHub Pages SPA Redirect to Hash Route
+      // Converts deep paths like /my-repo/live to /my-repo/#/live so HashRouter renders properly
+      (function() {
+        var l = window.location;
+        var pathSegments = l.pathname.split('/').filter(Boolean);
+        var repo = pathSegments.length > 0 ? '/' + pathSegments[0] : '';
+        var route = pathSegments.slice(1).join('/');
+        var searchAndHash = (l.search || '') + (l.hash || '');
+        var target = l.protocol + '//' + l.host + repo + '/#/' + route + searchAndHash;
+        l.replace(target);
+      })();
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
