@@ -82,9 +82,15 @@ export const LiveChannelsPage: React.FC = () => {
         if (filterCat === 'nepal-tv' || filterCat === 'nepal tv' || filterCat === 'nepal' || filterCat === 'nettv' || filterCat === 'nettv nepal') {
           return c.country === 'Nepal' || chCat.includes('nepal');
         }
+        if (filterCat === 'cricket' || filterCat === 'cricket special') {
+          return chCat.includes('cricket');
+        }
+        if (filterCat === 'movies' || filterCat === 'movies & cinema') {
+          return chCat.includes('movie') || chCat.includes('cinema');
+        }
         if (
           (filterCat === 'athletics & sports' || filterCat === 'sports') &&
-          (chCat === 'sports' || chCat === 'athletics & sports')
+          (chCat === 'sports' || chCat === 'athletics & sports' || chCat.includes('cricket'))
         ) {
           return true;
         }

@@ -86,8 +86,34 @@ export const HomePage: React.FC = () => {
         c.category === 'Athletics & Sports' ||
         c.category === 'Sports' ||
         c.name.toLowerCase().includes('sports') ||
-        c.name.toLowerCase().includes('football') ||
-        c.name.toLowerCase().includes('cricket')
+        c.name.toLowerCase().includes('football')
+    );
+  }, [channels]);
+
+  // Cricket Special channels (dlive.sx & World Cricket)
+  const cricketChannels = useMemo(() => {
+    return channels.filter(
+      (c) =>
+        c.category === 'Cricket Special' ||
+        c.name.toLowerCase().includes('cricket') ||
+        c.name.toLowerCase().includes('star sports') ||
+        c.name.toLowerCase().includes('willow') ||
+        c.name.toLowerCase().includes('ptv sports') ||
+        c.name.toLowerCase().includes('ten 5')
+    );
+  }, [channels]);
+
+  // Movies & Cinema (dlive.sx & 24/7 Blockbusters)
+  const movieChannels = useMemo(() => {
+    return channels.filter(
+      (c) =>
+        c.category === 'Movies & Cinema' ||
+        c.category === 'Movies' ||
+        c.name.toLowerCase().includes('movie') ||
+        c.name.toLowerCase().includes('cinema') ||
+        c.name.toLowerCase().includes('hbo') ||
+        c.name.toLowerCase().includes('goldmines') ||
+        c.name.toLowerCase().includes('max')
     );
   }, [channels]);
 
@@ -529,6 +555,74 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {entertainmentChannels.slice(0, 8).map((channel) => (
+              <ChannelCard key={channel.id} channel={channel} onSelect={handleSelectFeaturedChannel} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Newly Added Cricket Special Showcase (at the bottom) */}
+      {cricketChannels.length > 0 && (
+        <section id="cricket-channels-section" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-amber-950/40 via-slate-900/60 to-slate-900/40 p-4 sm:p-5 rounded-2xl border border-amber-800/40">
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-600 text-white tracking-wider shadow-md shadow-amber-950/50">
+                CRICKET SPECIAL
+              </span>
+              <div>
+                <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                  Live Cricket & Tournaments (लाइभ क्रिकेट)
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Star Sports 1 HD, Willow Cricket, Sony Ten 5, Astro Cricket, PTV Sports & World Series
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/live?category=cricket"
+              className="px-3.5 py-2 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+            >
+              <span>View All Cricket Channels</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {cricketChannels.slice(0, 8).map((channel) => (
+              <ChannelCard key={channel.id} channel={channel} onSelect={handleSelectFeaturedChannel} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Newly Added 24/7 Movies & Cinema Showcase (at the bottom) */}
+      {movieChannels.length > 0 && (
+        <section id="movies-channels-section" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-rose-950/40 via-slate-900/60 to-slate-900/40 p-4 sm:p-5 rounded-2xl border border-rose-800/40">
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-600 text-white tracking-wider shadow-md shadow-rose-950/50">
+                24/7 CINEMA
+              </span>
+              <div>
+                <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                  Movies & Cinema (२४/७ चलचित्रहरू)
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Goldmines, Zee Cinema HD, Sony MAX, HBO HD, Cinemax, Showtime & Star Gold
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/live?category=movies"
+              className="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+            >
+              <span>View All Movie Channels</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {movieChannels.slice(0, 8).map((channel) => (
               <ChannelCard key={channel.id} channel={channel} onSelect={handleSelectFeaturedChannel} />
             ))}
           </div>

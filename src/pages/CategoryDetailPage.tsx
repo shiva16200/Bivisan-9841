@@ -29,9 +29,15 @@ export const CategoryDetailPage: React.FC = () => {
           const chCat = c.category.toLowerCase();
           if (
             (catNameLower === 'athletics & sports' || catNameLower === 'sports') &&
-            (chCat === 'sports' || chCat === 'athletics & sports')
+            (chCat === 'sports' || chCat === 'athletics & sports' || chCat.includes('cricket'))
           ) {
             return true;
+          }
+          if (catNameLower.includes('cricket')) {
+            return chCat.includes('cricket');
+          }
+          if (catNameLower.includes('movie') || catNameLower.includes('cinema')) {
+            return chCat.includes('movie') || chCat.includes('cinema');
           }
           return chCat === catNameLower;
         });

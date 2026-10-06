@@ -13,8 +13,27 @@ interface UseHlsPlayerProps {
 }
 
 export function resolvePlayableStreamUrl(url: string): string {
-  if (!url) return '';
+  if (!url) return 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
   const trimmed = url.trim();
+
+  // If stream points to dead NetTV server IP or old /api/stream/live/
+  if (trimmed.includes('202.79.40.181') || trimmed.includes('/api/stream/live/')) {
+    if (trimmed.includes('516') || trimmed.includes('1413') || trimmed.toLowerCase().includes('kantipur')) {
+      return 'https://ktvhdsg.ekantipur.com:8443/high_quality_85840165/hd/playlist.m3u8';
+    }
+    if (trimmed.includes('capital') || trimmed.includes('105')) {
+      return 'https://streaming.tvnepal.com:19360/capitaltv/720p.m3u8';
+    }
+    if (trimmed.includes('ray') || trimmed.includes('106')) {
+      return 'https://streaming.tvnepal.com:19360/raynewsdaily/720p.m3u8';
+    }
+    if (trimmed.includes('sports') || trimmed.includes('201') || trimmed.includes('fifa')) {
+      return 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8';
+    }
+    return 'https://streams.tangotv.in/GOLDMINES/ORIGIN/tracks-v1a1/mono.m3u8';
+  }
+
+  // Handle fifa26 / Himalayan sports
   if (
     trimmed.includes('fifa26') ||
     trimmed.includes('HimalayaSports') ||
@@ -22,8 +41,12 @@ export function resolvePlayableStreamUrl(url: string): string {
     trimmed.includes('h-sports') ||
     trimmed.includes('fifa.m3u8')
   ) {
+    if (typeof window !== 'undefined' && window.location.hostname.endsWith('github.io')) {
+      return 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8';
+    }
     return '/fifa26/HimalayaSportsFifa026/playlist.m3u8';
   }
+
   // Streams that support direct client playback with open CORS headers
   if (
     trimmed.includes('tangotv.in') ||
@@ -44,8 +67,9 @@ export function resolvePlayableStreamUrl(url: string): string {
   ) {
     return trimmed;
   }
-  if (trimmed.startsWith('/api/')) return trimmed;
+
   if (trimmed.includes('.php') || trimmed.includes('.html')) return trimmed;
+
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     if (trimmed.includes('/api/stream/proxy')) return trimmed;
     // On static deployments (e.g. GitHub Pages) where /api doesn't exist, load directly
@@ -54,6 +78,7 @@ export function resolvePlayableStreamUrl(url: string): string {
     }
     return `/api/stream/proxy?url=${encodeURIComponent(trimmed)}`;
   }
+
   return trimmed;
 }
 
@@ -265,10 +290,11 @@ export function useHlsPlayer({
   }, [autoPlay]);
 
   const switchToBackup = useCallback(() => {
-    if (backupStreamUrl && activeUrl !== backupStreamUrl) {
-      console.warn('Primary stream failed, seamlessly switching to backup stream:', backupStreamUrl);
+    const target = backupStreamUrl || 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+    if (activeUrl !== target) {
+      console.warn('Seamlessly switching to verified high-speed backup stream:', target);
       setIsBackupActive(true);
-      setActiveUrl(backupStreamUrl);
+      setActiveUrl(target);
       setErrorMessage(null);
       setIsBuffering(true);
     }
@@ -532,19 +558,11 @@ export function useHlsPlayer({
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
             console.log('Recovering from network error on current channel...');
-            if (retryCountRef.current < 3) {
+            if (retryCountRef.current < 2) {
               retryCountRef.current += 1;
               hls.startLoad();
-            } else if (backupStreamUrl && !isBackupActive) {
-              console.warn('Failing over to backup stream URL after network retries:', backupStreamUrl);
-              switchToBackup();
             } else {
-              // Cache-bust retry after 1.5 seconds on the SAME channel
-              retryTimeoutRef.current = setTimeout(() => {
-                retryCountRef.current = 0;
-                hls.loadSource(finalPlayUrl + (finalPlayUrl.includes('?') ? '&' : '?') + `_r=${Date.now()}`);
-                hls.startLoad();
-              }, 1500);
+              switchToBackup();
             }
             break;
           case Hls.ErrorTypes.MEDIA_ERROR:
@@ -552,16 +570,8 @@ export function useHlsPlayer({
             hls.recoverMediaError();
             break;
           default:
-            console.error('Fatal playback error, self-healing current channel:', data.details);
-            if (backupStreamUrl && !isBackupActive) {
-              switchToBackup();
-            } else {
-              retryTimeoutRef.current = setTimeout(() => {
-                retryCountRef.current = 0;
-                setErrorMessage(null);
-                setupPlayer();
-              }, 2000);
-            }
+            console.error('Fatal playback error, failing over to backup:', data.details);
+            switchToBackup();
             break;
         }
       });

@@ -65,12 +65,28 @@ function getCategoryShowTitles(category: string, channelName: string): Array<{ t
         { title: 'Beyond the Whistle', description: 'Documentary profile examining the training regimes of Olympic contenders.' },
         { title: 'Late Night Sports Central', description: 'Highlights, scores, and dramatic game-winning buzzer beaters from around the globe.' },
       ];
-    case 'Movies':
+    case 'Cricket Special':
       return [
+        { title: 'ICC Live World Match / Super 4', description: 'Live ball-by-ball cricket action with expert pitch and toss analysis.' },
+        { title: 'T20 Innings Breakdown', description: 'Powerplay sixes, death bowling execution, and player scorecards.' },
+        { title: 'Post-Match Presentation Live', description: 'Captain interviews, Man of the Match awards, and series leaderboard.' },
+        { title: 'Cricket Classics & Highlights', description: 'Historic test matches, sensational centuries, and iconic world cup moments.' },
+      ];
+    case 'Nepal TV':
+    case 'Nepal Live TV':
+      return [
+        { title: 'नेपाल प्रभात समाचार (Morning Bulletin)', description: 'ताजा राष्ट्रिय तथा अन्तर्राष्ट्रिय समाचार, काठमाडौं ट्राफिक तथा मौसम अपडेट।' },
+        { title: 'साझा बहश र समसामयिक विश्लेषण', description: 'राजनीतिक नेतृत्व तथा आर्थिक विश्लेषकहरूसँग प्रत्यक्ष कुराकानी र विश्लेषण।' },
+        { title: 'नेपाली संगीत तथा सांस्कृतिक विशेष', description: 'लोकदोहोरी, आधुनिक संगीत तथा सांस्कृतिक प्रस्तुतिहरूको प्रत्यक्ष उत्सव।' },
+        { title: 'मुख्य समाचार (Main Evening Samachar)', description: 'दिनभरिका प्रमुख राजनीतिक, सामाजिक तथा खेलकुद समाचारहरूको विस्तृत विवरण।' },
+      ];
+    case 'Movies':
+    case 'Movies & Cinema':
+      return [
+        { title: 'Blockbuster World Premiere', description: 'High-octane commercial cinema, star power, and record-breaking box office hits.' },
         { title: 'Cinema Showcase: Golden Era', description: 'Restored milestone films from visionary directors with original theatrical score.' },
-        { title: 'Directors Cut: Neo-Noir', description: 'Critically acclaimed atmospheric crime mystery set in a dystopian sprawl.' },
-        { title: 'Festival Spotlight: Sundance Pick', description: 'Intimate indie drama exploring human connection across divided borders.' },
-        { title: 'Midnight Thriller Feature', description: 'Tense psychological cat-and-mouse game between an undercover investigator and syndicate.' },
+        { title: 'Directors Cut: Action Thriller', description: 'Critically acclaimed atmospheric crime mystery and heart-stopping stunts.' },
+        { title: 'Late Night Movie Fest', description: 'Cult cinema, romantic classics, and edge-of-the-seat drama.' },
       ];
     case 'Music':
       return [

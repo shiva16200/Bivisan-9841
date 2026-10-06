@@ -18,24 +18,16 @@ import {
 
 const initialIdSet = new Set(INITIAL_CHANNELS.map((c) => c.id));
 
-export const ALL_DEFAULT_CHANNELS: Channel[] = [
-  ...INITIAL_CHANNELS.map((c) => ({ ...c, isVerifiedLive: true })),
-  ...TECHJAIL_CHANNELS.filter((c) => !initialIdSet.has(c.id)).map((c) => {
-    const chidMatch = c.streamUrl.match(/\/api\/stream\/live\/(\d+)\.m3u8/);
-    const chid = chidMatch ? chidMatch[1] : '';
-    const isVerified = chid ? VERIFIED_CHID_SET.has(chid) : false;
-    return {
-      ...c,
-      isVerifiedLive: isVerified,
-    };
-  }),
-];
+export const ALL_DEFAULT_CHANNELS: Channel[] = INITIAL_CHANNELS.map((c) => ({
+  ...c,
+  isVerifiedLive: true,
+}));
 
 export function getVerifiedWorkingChannels(): Channel[] {
-  return ALL_DEFAULT_CHANNELS.filter((c) => c.isVerifiedLive);
+  return ALL_DEFAULT_CHANNELS;
 }
 
-const CUSTOM_STORAGE_KEY = 'streamlive_custom_channels_v26';
+const CUSTOM_STORAGE_KEY = 'streamlive_custom_channels_v50';
 
 let inMemoryStoredChannels: Channel[] | null = null;
 

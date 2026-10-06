@@ -160,6 +160,16 @@ export const LivePlayer: React.FC<LivePlayerProps> = ({
     incrementChannelView(channel.id, channel.viewerCount);
   }, [channel, addToHistory]);
 
+  // Autonomous Reconnect: if errorMessage appears, attempt auto-reconnect in 1.5s so user never stays stuck
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        retryPlayback();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage, retryPlayback]);
+
   // Fullscreen listeners
   useEffect(() => {
     const handleFullscreenChange = () => {
